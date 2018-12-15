@@ -1,0 +1,13 @@
+---
+# Installation of the web server with a unique IP adress
+  - name: Installation des serveurs web
+    become: true
+    hosts: web
+    remote_user: root   # The access is only for the root user
+    vars:
+      domain: website  # Name of the domain created on the web host
+
+    roles:
+       #- tools        #important only if we need Git, here NO
+       - nginx         # Returns to nginx/tasks/main.yml
+       - php           # Returns to php/tasks/main.yml

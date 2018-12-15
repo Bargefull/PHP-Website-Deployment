@@ -1,0 +1,2 @@
+[web]
+packer-image ansible_host=51.158.69.233 ansible_user=root
