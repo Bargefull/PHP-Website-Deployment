@@ -1,0 +1,13 @@
+---
+# Installation of the web server with a unique IP adress
+  - name: Installation des serveurs web
+    become: true
+    hosts: web
+    gather_facts: no
+    remote_user: root   # The access is only for the root user
+    vars:
+      domain: tri4life.fr  # Name of the domain created on the web host
+
+    roles:
+       - nginx         # Returns to nginx/tasks/main.yml
+       - php           # Returns to php/tasks/main.yml

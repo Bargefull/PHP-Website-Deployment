@@ -1,0 +1,28 @@
+{
+  "variables": {
+    "api_access_key": "xxxx-xxxx-...",
+    "api_token": "xxxx-xxxx-..."
+  },
+  "builders": [
+    {
+      "api_access_key": "{{ user `api_access_key` }}",
+      "api_token": "{{ user `api_token` }}",
+      "server_name": "packer",
+      "image_name": "packer-image",
+      "snapshot_name": "packer-snapshot",
+      "type": "scaleway",
+      "image": "xxxx-xxxx-...",
+      "region": "par1",
+      "commercial_type": "START1-S",
+      "ssh_private_key_file": "usr/id_rsa",
+      "ssh_username": "root"
+    }
+  ],
+  "provisioners": [
+    {
+     "type": "ansible",
+      "playbook_file": "../Ansible/Nginx/playbook.yml"
+     
+   }
+  ]
+}

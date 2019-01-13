@@ -1,0 +1,12 @@
+---
+#Handlers are lists of tasks
+#These ‘notify’ actions are triggered at the end of each block of tasks in a playbook
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted
+
+  - name: restart php7.0-fpm
+    service:
+      name: php7.0-fpm
+      state: restarted

@@ -1,0 +1,68 @@
+---
+#Installation of the package Nginx
+#*Nginx was installed in our HTTP server as a file management software in order
+#to have a better readability and structure with separated files unlike Apache2
+
+  - name: Nginx Installation
+    apt:
+      name: "{{ item }}"
+      update_cache: yes  #Equivalent of apt-get update
+      state: present #It will simply ensure that a desired package is installed.
+    with_items:
+      - nginx
+
+#Delete the default config of Nginx that displays the Nginx home page
+  - name: Delete default.conf
+    become: true  #Root execution
+    file:
+      path: /etc/nginx/sites-enabled/default #Location of the default page
+      state: absent  # If absent, directories will be deleted
+    #notify: restart nginx   #Restart Nginx /roles/handlers/main.yml
+
+#Creation of the folder {{ domain }} for the user to store all the files
+#ls /home
+  - name: Creation of the {{ domain }} folder
+    become: true #Root execution
+    file:
+      path: /home/{{ domain }}
+      state: directory
+
+#Creation of the symbolic link (alias file + referencing )
+#ls /var/www
+  - name: link www
+    become: true
+    file:
+      src: /home/{{ domain }}
+      dest: /var/www/{{ domain }}
+      state: link #The symbolic link will be created or changed
+
+#Creation of my own configuration file that Nginw will open at first
+  - name: Creation of Nginx Configuration file
+    template:
+      src: templates/nginx.j2 #Let's take the file stored in Nginx/templates
+      dest: /etc/nginx/sites-available/{{ domain }} #The file will be uploaded there in the folder {{ domain }} created instad of
+                                                    #the default Nginx folder called "html" and the default configuration file inside
+
+#Authorization of Nginx to use php files
+  - name: Getting php type allowed by Nginx
+    lineinfile:
+      dest: "/etc/nginx/mime.types"
+      insertbefore: '}'
+      line: "text/html php;"
+      state: present
+
+  #Local Method
+  - name: Deploy our awesome website
+    copy: #copy our files from the source to the destination
+       src: Website/
+       dest: /var/www/{{ domain }} #Let's store them on the folder {{ domain }}
+    tags: deploy #To make sure it works, we deploy it
+
+
+#Creation of the symbolic link (alias file + referencing )
+  - name: activation of the {{ domain }} domain
+    file:
+      src: /etc/nginx/sites-available/{{ domain }}
+      dest: /etc/nginx/sites-enabled/{{ domain }}
+      state: link
+    notify: restart nginx # make a link to the line of the file Nginx/roles/handlers/main.yml
